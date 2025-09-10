@@ -38,36 +38,7 @@ Build Tool: Maven
 
 Version Control: Git, GitHub
 
-📂 Project Structure
-smartcity-management/
-├── src/
-│   ├── main/
-│   │   ├── java/com/smartcity/
-│   │   │   ├── SmartCityApp.java        # Main Spring Boot App
-│   │   │   ├── config/                  # Security & Config Classes
-│   │   │   ├── controller/              # Controllers (REST + MVC)
-│   │   │   ├── exception/               # Custom Exceptions
-│   │   │   ├── model/                   # Entities (JPA Models)
-│   │   │   ├── repository/              # Data Repositories
-│   │   │   └── service/                 # Service Layer (Business Logic)
-│   │   └── resources/
-│   │       ├── application.properties   # DB & App Config
-│   │       ├── data.sql                 # Initial Data
-│   │       ├── static/                  # CSS, Images
-│   │       │   ├── styles.css
-│   │       │   └── images/
-│   │       └── templates/               # Thymeleaf Templates
-│   │           ├── *.html                # Main Pages
-│   │           ├── admin/               # Admin Views
-│   │           ├── auth/                # Login, Register
-│   │           ├── fragments/           # Header, Footer, Navbar
-│   │           └── utilities/           # Utility Request Pages
-│   └── test/
-│       └── java/com/smartcity/          # Unit & Integration Tests
-├── pom.xml                               # Maven Dependencies
-├── mvnw, mvnw.cmd                        # Maven Wrapper
-├── reset_database.sql                    # Reset DB Script
-└── HELP.md                               # Spring Boot Help
+
 
 🚀 Setup & Run
 

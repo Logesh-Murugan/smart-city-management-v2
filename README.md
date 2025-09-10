@@ -44,7 +44,7 @@ Version Control: Git, GitHub
 
 Clone the repository
 
-git clone https://github.com/your-username/smartcity-management.git
+git clone https://github.com/Logesh-Murugan/smart-city-management-v2.git
 cd smartcity-management
 
 
@@ -56,8 +56,6 @@ Build & Run
 
 ./mvnw spring-boot:run
 
-
-(For Windows, use mvnw.cmd spring-boot:run)
 
 Access the App
 👉 Open http://localhost:8080

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${utilityService.serviceName} + ' - Utility Services'">Utility Service Details</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .service-header {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            color: white;
+            padding: 50px 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .service-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        .service-type-badge {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        .service-name {
+            font-size: 2.8em;
+            margin: 0 0 15px 0;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .service-department {
+            font-size: 1.3em;
+            opacity: 0.95;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .details-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .details-card h3 {
+            color: #e67e22;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 80px;
+        }
+        .info-value {
+            color: #34495e;
+            flex: 1;
+        }
+        .description-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .description-card h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        .btn-primary {
+            background: #27ae60;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary:hover {
+            background: #219a52;
+        }
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-secondary:hover {
+            background: #2980b9;
+        }
+        .btn-back {
+            background: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .btn-back:hover {
+            background: #7f8c8d;
+        }
+        .online-link {
+            background: #9b59b6;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .online-link:hover {
+            background: #8e44ad;
+        }
+        @media (max-width: 768px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div th:replace="~{fragments/navbar :: navbar('utilities')}"></div>
+
+    <div class="container">
+        <!-- Back Button -->
+        <a href="/utilities" class="btn-back">
+            ← Back to Utility Services
+        </a>
+
+        <!-- Service Header -->
+        <div class="service-header">
+            <div class="service-type-badge" th:text="${utilityService.utilityType.displayName}">Service Type</div>
+            <h1 class="service-name" th:text="${utilityService.serviceName}">Service Name</h1>
+            <p class="service-department" th:text="${utilityService.department}">Department</p>
+        </div>
+
+        <!-- Service Details -->
+        <div class="details-grid">
+            <!-- Contact Information -->
+            <div class="details-card">
+                <h3>📞 Contact Information</h3>
+                <div class="info-item">
+                    <span class="info-label">📍 Address:</span>
+                    <span class="info-value" th:text="${utilityService.officeAddress}">Office Address</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">📞 Phone:</span>
+                    <span class="info-value" th:text="${utilityService.contactNumbers}">Contact Numbers</span>
+                </div>
+                <div class="info-item" th:if="${utilityService.email}">
+                    <span class="info-label">📧 Email:</span>
+                    <span class="info-value" th:text="${utilityService.email}">Email</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🕒 Hours:</span>
+                    <span class="info-value" th:text="${utilityService.workingHours}">Working Hours</span>
+                </div>
+            </div>
+
+            <!-- Service Information -->
+            <div class="details-card">
+                <h3>ℹ️ Service Information</h3>
+                <div class="info-item">
+                    <span class="info-label">🏷️ Type:</span>
+                    <span class="info-value" th:text="${utilityService.utilityType.displayName}">Service Type</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">🏢 Department:</span>
+                    <span class="info-value" th:text="${utilityService.department}">Department</span>
+                </div>
+                <div th:if="${utilityService.onlineRequestLink}">
+                    <a th:href="${utilityService.onlineRequestLink}" 
+                       target="_blank" 
+                       class="online-link">
+                        🌐 Online Services Portal
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="description-card" th:if="${utilityService.description}">
+            <h3>📋 Service Description</h3>
+            <p th:text="${utilityService.description}">Service description will appear here.</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a th:href="@{/utilities/{id}/request(id=${utilityService.id})}" class="btn-primary">
+                📝 Submit Request/Complaint
+            </a>
+            <a href="/utilities/track" class="btn-secondary">
+                🔍 Track Existing Request
+            </a>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="details-card">
+            <h3>💡 How to Submit a Request</h3>
+            <ol>
+                <li><strong>Click "Submit Request/Complaint"</strong> above to open the request form</li>
+                <li><strong>Fill in your details</strong> including name, contact information, and address</li>
+                <li><strong>Describe your issue</strong> in detail to help us understand the problem</li>
+                <li><strong>Submit the form</strong> and note down your reference ID</li>
+                <li><strong>Track your request</strong> using the reference ID or your mobile number</li>
+            </ol>
+            <p><strong>Note:</strong> You can submit requests even without creating an account. However, registered users get additional benefits like request history and faster processing.</p>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Smart City Management - Utility Services
+    </footer>
+</body>
+</html>

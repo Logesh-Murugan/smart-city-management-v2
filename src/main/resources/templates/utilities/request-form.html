@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Submit Request - Utility Services</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .form-header {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(230, 126, 34, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .form-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+        .form-header h1 {
+            position: relative;
+            z-index: 1;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .form-header p {
+            position: relative;
+            z-index: 1;
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin: 0;
+        }
+        .service-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #e67e22;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .required {
+            color: #e74c3c;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #e67e22;
+            box-shadow: 0 0 5px rgba(230, 126, 34, 0.3);
+        }
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .help-text {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .btn-submit {
+            background: #27ae60;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn-submit:hover {
+            background: #219a52;
+        }
+        .btn-back {
+            background: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .btn-back:hover {
+            background: #7f8c8d;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div th:replace="~{fragments/navbar :: navbar('utilities')}"></div>
+
+    <div class="container">
+        <!-- Back Button -->
+        <a th:href="@{/utilities/{id}(id=${utilityService.id})}" class="btn-back">
+            ← Back to Service Details
+        </a>
+
+        <!-- Form Header -->
+        <div class="form-header">
+            <h1>📝 Submit Service Request</h1>
+            <p>Report issues or request services for utility services</p>
+        </div>
+
+        <!-- Service Information -->
+        <div class="service-info">
+            <h3 th:text="${utilityService.serviceName}">Service Name</h3>
+            <p><strong>Department:</strong> <span th:text="${utilityService.department}">Department</span></p>
+            <p><strong>Type:</strong> <span th:text="${utilityService.utilityType.displayName}">Service Type</span></p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success">
+            <span th:text="${success}">Success message</span>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <span th:text="${error}">Error message</span>
+        </div>
+
+        <!-- Request Form -->
+        <div class="form-container">
+            <form th:action="@{/utilities/{id}/request(id=${utilityService.id})}"
+                  method="post"
+                  th:object="${utilityRequest}">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <!-- Personal Information -->
+                <h3>👤 Personal Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="citizenName">Full Name <span class="required">*</span></label>
+                        <input type="text" 
+                               id="citizenName" 
+                               th:field="*{citizenName}" 
+                               th:value="${currentUser != null ? currentUser.name : ''}"
+                               required 
+                               placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="mobileNumber">Mobile Number <span class="required">*</span></label>
+                        <input type="tel" 
+                               id="mobileNumber" 
+                               th:field="*{mobileNumber}" 
+                               required 
+                               placeholder="Enter your mobile number"
+                               pattern="[0-9]{10}">
+                        <div class="help-text">10-digit mobile number for updates</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" 
+                               id="email" 
+                               th:field="*{email}" 
+                               th:value="${currentUser != null ? currentUser.email : ''}"
+                               placeholder="Enter your email (optional)">
+                        <div class="help-text">Optional - for email notifications</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="preferredContactMethod">Preferred Contact Method <span class="required">*</span></label>
+                        <select id="preferredContactMethod" th:field="*{preferredContactMethod}" required>
+                            <option value="">Select contact method</option>
+                            <option th:each="method : ${contactMethods}" 
+                                    th:value="${method}" 
+                                    th:text="${method.displayName}">Contact Method</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address/Area <span class="required">*</span></label>
+                    <input type="text" 
+                           id="address" 
+                           th:field="*{address}" 
+                           required 
+                           placeholder="Enter your complete address or area">
+                    <div class="help-text">Include area, street, and landmarks for better service</div>
+                </div>
+
+                <!-- Request Details -->
+                <h3>📋 Request Details</h3>
+
+                <div class="form-group">
+                    <label for="complaintType">Issue/Request Title <span class="required">*</span></label>
+                    <input type="text" 
+                           id="complaintType" 
+                           th:field="*{complaintType}" 
+                           required 
+                           placeholder="Brief title of your issue (e.g., 'No water supply', 'Street light not working')">
+                    <div class="help-text">Short, descriptive title of your issue</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Detailed Description <span class="required">*</span></label>
+                    <textarea id="description" 
+                              th:field="*{description}" 
+                              required 
+                              placeholder="Provide detailed information about your issue or request. Include when the problem started, affected area, and any other relevant details..."></textarea>
+                    <div class="help-text">The more details you provide, the better we can help you</div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit">
+                    📤 Submit Request
+                </button>
+            </form>
+        </div>
+
+        <!-- Information Box -->
+        <div class="service-info" style="margin-top: 30px;">
+            <h4>📌 What happens next?</h4>
+            <ol>
+                <li><strong>Request Received:</strong> Your request will be logged with a unique reference ID</li>
+                <li><strong>Processing:</strong> Our team will review and assign your request to the appropriate department</li>
+                <li><strong>Updates:</strong> You'll receive updates via your preferred contact method</li>
+                <li><strong>Resolution:</strong> We'll work to resolve your issue as quickly as possible</li>
+            </ol>
+            <p><strong>💡 Tip:</strong> Save your reference ID to track the status of your request anytime!</p>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Smart City Management - Utility Services
+    </footer>
+</body>
+</html>

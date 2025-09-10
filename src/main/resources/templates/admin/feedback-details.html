@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .back-btn { display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin-bottom: 20px; }
+        .header { background: #007bff; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .info-row { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+        .label { font-weight: bold; color: #333; }
+        .message { background: #e9ecef; padding: 15px; border-radius: 4px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/admin/feedback" class="back-btn">← Back to Feedback</a>
+
+        <div class="header">
+            <h1>Feedback Details</h1>
+            <p>Feedback ID: <span th:text="${feedback.id}">1</span></p>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Name:</span> <span th:text="${feedback.name}">Name</span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Email:</span> <span th:text="${feedback.email}">Email</span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Subject:</span> <span th:text="${feedback.subject}">Subject</span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Type:</span> <span th:text="${feedback.feedbackType.displayName}">Type</span>
+        </div>
+
+        <div class="info-row">
+            <span class="label">Rating:</span> <span th:text="${feedback.rating}">5</span> ⭐
+        </div>
+
+        <div class="info-row">
+            <span class="label">Date:</span> <span th:text="${feedback.createdAt}">Date</span>
+        </div>
+
+        <div class="message">
+            <div class="label">Message:</div>
+            <p th:text="${feedback.message}">Message content</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/admin/feedback" class="back-btn">← Back to List</a>
+        </div>
+    </div>
+</body>
+</html>
+
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition-fast: 150ms ease-in-out;
+            --transition-normal: 300ms ease-in-out;
+            --transition-slow: 500ms ease-in-out;
+        }
+
+        /* Modern Navbar Styles */
+        .modern-navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: var(--space-4) 0;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 var(--space-6);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            transition: var(--transition-normal);
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+            color: var(--primary-100);
+        }
+
+        .navbar-brand-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: var(--space-2);
+        }
+
+        .navbar-nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .navbar-nav a:hover,
+        .navbar-nav a.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .navbar-auth {
+            display: flex;
+            gap: var(--space-3);
+            align-items: center;
+        }
+
+        .btn {
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-normal);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .btn-primary {
+            background: var(--primary-600);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-700);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-sm {
+            padding: var(--space-2) var(--space-3);
+            font-size: 0.875rem;
+        }
+
+        /* Back Button Styles - Left Side */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid var(--gray-200);
+            transition: all var(--transition-normal);
+            margin: var(--space-6) 0 var(--space-8) 0;
+        }
+
+        .back-button:hover {
+            background: var(--gray-200);
+            border-color: var(--gray-300);
+            color: var(--gray-800);
+        }
+
+        /* Admin Container with proper spacing */
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        /* Page Transition */
+        .page-transition {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Feedback Header */
+        .feedback-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: var(--space-8);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-8);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feedback-header h1 {
+            margin: 0 0 var(--space-2) 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+        .feedback-id {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .details-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .details-card h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 120px;
+        }
+        .info-value {
+            color: #34495e;
+            flex: 1;
+        }
+        .feedback-type-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .type-suggestion { background: #3498db; color: white; }
+        .type-complaint { background: #e74c3c; color: white; }
+        .type-compliment { background: #27ae60; color: white; }
+        .type-general { background: #95a5a6; color: white; }
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .rating-stars {
+            color: #f39c12;
+            font-size: 1.5em;
+        }
+        .rating-number {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .message-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #9b59b6;
+            margin-top: 10px;
+        }
+        .btn-back {
+            background: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .btn-back:hover {
+            background: #7f8c8d;
+        }
+        .response-section {
+            background: #e8f4fd;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 5px solid #3498db;
+        }
+        .response-section h4 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+        }
+        .timeline {
+            border-left: 3px solid #9b59b6;
+            padding-left: 20px;
+            margin-top: 20px;
+        }
+        .timeline-item {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: #9b59b6;
+            border-radius: 50%;
+        }
+        .timeline-date {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        .timeline-content {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        @media (max-width: 768px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="page-transition">
+    <!-- Modern Navigation -->
+    <nav class="modern-navbar" id="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <span class="navbar-brand-icon">🏙️</span>
+                <span>Smart City</span>
+            </a>
+
+            <ul class="navbar-nav">
+                <li><a href="/">🏠 Home</a></li>
+                <li><a href="/tourist-spots">🗺️ Tourist Spots</a></li>
+                <li><a href="/city-services">🏢 City Services</a></li>
+                <li><a href="/utilities">⚡ Utilities</a></li>
+                <li><a href="/emergency-contacts">🚨 Emergency</a></li>
+                <li sec:authorize="isAuthenticated()"><a href="/feedback">💬 Feedback</a></li>
+                <li sec:authorize="hasRole('ADMIN')"><a href="/admin" class="active">⚙️ Admin</a></li>
+            </ul>
+
+            <div class="navbar-auth">
+                <a href="/login" class="btn btn-secondary btn-sm" sec:authorize="!isAuthenticated()">Login</a>
+                <a href="/register" class="btn btn-primary btn-sm" sec:authorize="!isAuthenticated()">Register</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;" sec:authorize="isAuthenticated()">
+                    <button type="submit" class="btn btn-secondary btn-sm">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Back Button -->
+        <a href="/admin/feedback" class="back-button">
+            ← Back to Feedback
+        </a>
+
+        <!-- Feedback Header -->
+        <div class="feedback-header">
+            <div class="feedback-id" th:text="'Feedback ID: #' + ${feedback.id}">Feedback ID</div>
+            <h1 th:text="${feedback.subject}">Feedback Subject</h1>
+            <p th:text="'Submitted by ' + ${feedback.name} + ' on ' + ${#temporals.format(feedback.createdAt, 'MMMM dd, yyyy')}">Feedback info</p>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="details-grid">
+            <!-- Main Feedback Details -->
+            <div class="details-card">
+                <h3>💬 Feedback Details</h3>
+                
+                <div class="info-item">
+                    <span class="info-label">Type:</span>
+                    <span th:class="'feedback-type-badge type-' + ${#strings.toLowerCase(feedback.feedbackType.name())}" 
+                          th:text="${feedback.feedbackType.displayName}">Type</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Subject:</span>
+                    <span class="info-value" th:text="${feedback.subject}">Subject</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Rating:</span>
+                    <div class="rating-display">
+                        <span class="rating-number" th:text="${feedback.rating}">0</span>
+                        <span class="rating-stars">
+                            <span th:each="i : ${#numbers.sequence(1, 5)}" 
+                                  th:text="${i <= feedback.rating} ? '⭐' : '☆'">⭐</span>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Submitted:</span>
+                    <span class="info-value" th:text="${#temporals.format(feedback.createdAt, 'MMMM dd, yyyy HH:mm')}">Date</span>
+                </div>
+
+                <h4>📝 Message</h4>
+                <div class="message-box" th:text="${feedback.message}">Feedback message</div>
+                
+                <!-- Response Section -->
+                <div class="response-section">
+                    <h4>📋 Admin Response</h4>
+                    <p><strong>Status:</strong> Reviewed and acknowledged</p>
+                    <p><strong>Action Taken:</strong> This feedback has been forwarded to the relevant department for consideration and improvement.</p>
+                    <p><strong>Follow-up:</strong> If this feedback requires specific action, the citizen will be contacted directly.</p>
+                </div>
+            </div>
+
+            <!-- Citizen Information -->
+            <div class="details-card">
+                <h3>👤 Citizen Information</h3>
+                
+                <div class="info-item">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value" th:text="${feedback.name}">Name</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">
+                        <a th:href="'mailto:' + ${feedback.email}" th:text="${feedback.email}" style="color: #3498db;">Email</a>
+                    </span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Phone:</span>
+                    <span class="info-value" th:text="${feedback.phone ?: 'Not provided'}">Phone</span>
+                </div>
+
+                <!-- Feedback Statistics -->
+                <h4 style="margin-top: 25px;">📊 Feedback Statistics</h4>
+                <div class="info-item">
+                    <span class="info-label">Category:</span>
+                    <span class="info-value" th:text="${feedback.feedbackType.displayName}">Category</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Priority:</span>
+                    <span class="info-value" 
+                          th:text="${feedback.feedbackType.name() == 'COMPLAINT'} ? 'High' : 'Normal'"
+                          th:style="${feedback.feedbackType.name() == 'COMPLAINT'} ? 'color: #e74c3c; font-weight: bold;' : 'color: #27ae60;'">Priority</span>
+                </div>
+
+                <!-- Timeline -->
+                <h4 style="margin-top: 25px;">📅 Timeline</h4>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date" th:text="${#temporals.format(feedback.createdAt, 'MMM dd, yyyy HH:mm')}">Date</div>
+                        <div class="timeline-content">Feedback Submitted</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date" th:text="${#temporals.format(feedback.createdAt, 'MMM dd, yyyy HH:mm')}">Date</div>
+                        <div class="timeline-content">Feedback Reviewed</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div style="margin-top: 25px;">
+                    <h4>⚡ Quick Actions</h4>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="padding: 10px; background: #e8f4fd; border-radius: 5px; border-left: 4px solid #3498db;">
+                            <strong>Email Response:</strong><br>
+                            <small>
+                                <a th:href="'mailto:' + ${feedback.email} + '?subject=Re: ' + ${feedback.subject}" 
+                                   style="color: #3498db;">Send email response</a>
+                            </small>
+                        </div>
+                        <div th:if="${feedback.feedbackType.name() == 'COMPLAINT'}" 
+                             style="padding: 10px; background: #fdeaea; border-radius: 5px; border-left: 4px solid #e74c3c;">
+                            <strong>High Priority:</strong><br>
+                            <small>This complaint requires immediate attention</small>
+                        </div>
+                        <div th:if="${feedback.feedbackType.name() == 'SUGGESTION'}" 
+                             style="padding: 10px; background: #eaf4fd; border-radius: 5px; border-left: 4px solid #3498db;">
+                            <strong>Suggestion:</strong><br>
+                            <small>Consider for future improvements</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Actions -->
+        <div class="details-card">
+            <h3>🔧 Administrative Actions</h3>
+            <div class="response-section">
+                <h4>📋 Feedback Processing</h4>
+                <p><strong>Review Status:</strong> ✅ Completed</p>
+                <p><strong>Department Notified:</strong> ✅ Relevant department has been informed</p>
+                <p><strong>Citizen Response:</strong> 📧 Acknowledgment sent to citizen</p>
+                <p><strong>Follow-up Required:</strong> 
+                    <span th:if="${feedback.feedbackType.name() == 'COMPLAINT'}" style="color: #e74c3c;">Yes - High Priority</span>
+                    <span th:if="${feedback.feedbackType.name() != 'COMPLAINT'}" style="color: #27ae60;">No - Standard Processing</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Smart City Management - Admin Panel
+    </footer>
+</body>
+</html>

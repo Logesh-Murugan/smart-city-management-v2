@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Details - Admin</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .user-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .user-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+        }
+        .user-id {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .details-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .details-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .details-card h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #2c3e50;
+            min-width: 120px;
+        }
+        .info-value {
+            color: #34495e;
+            flex: 1;
+        }
+        .role-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .role-admin { background: #e74c3c; color: white; }
+        .role-user { background: #27ae60; color: white; }
+        .btn-back {
+            background: #95a5a6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .btn-back:hover {
+            background: #7f8c8d;
+        }
+        .activity-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .activity-section h4 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+        }
+        .activity-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        @media (max-width: 768px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div th:replace="~{fragments/navbar :: navbar('admin')}"></div>
+
+    <div class="container">
+        <!-- Back Button -->
+        <a href="/admin/users" class="btn-back">
+            ← Back to Users
+        </a>
+
+        <!-- User Header -->
+        <div class="user-header">
+            <div class="user-id" th:text="'User ID: #' + ${user.id}">User ID</div>
+            <h1 th:text="${user.name}">User Name</h1>
+            <p th:text="'Username: ' + ${user.username}">Username</p>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="details-grid">
+            <!-- Main User Details -->
+            <div class="details-card">
+                <h3>👤 User Information</h3>
+                
+                <div class="info-item">
+                    <span class="info-label">Full Name:</span>
+                    <span class="info-value" th:text="${user.name}">Name</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Username:</span>
+                    <span class="info-value" th:text="${user.username}">Username</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value" th:text="${user.email}">Email</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Role:</span>
+                    <span th:class="'role-badge role-' + ${#strings.toLowerCase(#strings.replace(user.role, 'ROLE_', ''))}"
+                          th:text="${#strings.replace(user.role, 'ROLE_', '')}">Role</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Registered:</span>
+                    <span class="info-value" th:text="${#temporals.format(user.createdAt, 'MMMM dd, yyyy HH:mm')}">Date</span>
+                </div>
+                
+                <div class="info-item" th:if="${user.updatedAt != user.createdAt}">
+                    <span class="info-label">Last Updated:</span>
+                    <span class="info-value" th:text="${#temporals.format(user.updatedAt, 'MMMM dd, yyyy HH:mm')}">Date</span>
+                </div>
+
+                <!-- User Activity Section -->
+                <div class="activity-section">
+                    <h4>📊 Account Statistics</h4>
+                    <div class="activity-item">
+                        <strong>Account Status:</strong> Active
+                    </div>
+                    <div class="activity-item">
+                        <strong>Account Type:</strong> <span th:text="${#strings.replace(user.role, 'ROLE_', '')}">Role</span>
+                    </div>
+                    <div class="activity-item">
+                        <strong>Registration Method:</strong> Web Registration
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Summary -->
+            <div class="details-card">
+                <h3>📈 Account Summary</h3>
+                
+                <div class="info-item">
+                    <span class="info-label">User ID:</span>
+                    <span class="info-value" th:text="${user.id}">ID</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Account Age:</span>
+                    <span class="info-value">
+                        <span th:text="${T(java.time.temporal.ChronoUnit).DAYS.between(user.createdAt.toLocalDate(), T(java.time.LocalDate).now())}">0</span> days
+                    </span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value" style="color: #27ae60; font-weight: bold;">Active</span>
+                </div>
+
+                <!-- Quick Actions -->
+                <div style="margin-top: 30px;">
+                    <h4>⚡ Quick Actions</h4>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <div style="padding: 10px; background: #e8f4fd; border-radius: 5px; border-left: 4px solid #3498db;">
+                            <strong>Account Management:</strong><br>
+                            <small>User account is active and functioning normally</small>
+                        </div>
+                        <div th:if="${user.role == 'ROLE_USER'}" style="padding: 10px; background: #fdf2e8; border-radius: 5px; border-left: 4px solid #f39c12;">
+                            <strong>Regular User:</strong><br>
+                            <small>Has access to public services and can submit requests</small>
+                        </div>
+                        <div th:if="${user.role == 'ROLE_ADMIN'}" style="padding: 10px; background: #fdeaea; border-radius: 5px; border-left: 4px solid #e74c3c;">
+                            <strong>Administrator:</strong><br>
+                            <small>Has full access to admin panel and management features</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div style="margin-top: 25px;">
+                    <h4>📞 Contact Information</h4>
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">
+                            <a th:href="'mailto:' + ${user.email}" th:text="${user.email}" style="color: #3498db;">Email</a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="details-card">
+            <h3>📋 Additional Information</h3>
+            <div class="activity-section">
+                <h4>🔒 Security Information</h4>
+                <div class="activity-item">
+                    <strong>Password:</strong> Encrypted and secure
+                </div>
+                <div class="activity-item">
+                    <strong>Login Method:</strong> Username/Password
+                </div>
+                <div class="activity-item">
+                    <strong>Account Security:</strong> Standard security measures applied
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Smart City Management - Admin Panel
+    </footer>
+</body>
+</html>

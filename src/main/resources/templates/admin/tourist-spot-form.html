@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${touristSpot.id != null ? 'Edit Tourist Spot' : 'Add Tourist Spot'} + ' - Admin'">Tourist Spot Form</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .form-header {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .required {
+            color: #e74c3c;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+        }
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .help-text {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .btn-submit {
+            background: #27ae60;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn-submit:hover {
+            background: #219a52;
+        }
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            margin-top: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn-cancel:hover {
+            background: #7f8c8d;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div th:replace="~{fragments/navbar :: navbar('admin')}"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="form-header">
+            <h1 th:text="${touristSpot.id != null ? '✏️ Edit Tourist Spot' : '➕ Add New Tourist Spot'}">Form Title</h1>
+            <p>Provide complete information about the tourist attraction</p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success">
+            <span th:text="${success}">Success message</span>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <span th:text="${error}">Error message</span>
+        </div>
+
+        <!-- Form -->
+        <div class="form-container">
+            <form th:action="${touristSpot.id != null ? '/admin/tourist-spots/edit/' + touristSpot.id : '/admin/tourist-spots/add'}" 
+                  method="post" 
+                  th:object="${touristSpot}">
+                
+                <!-- Basic Information -->
+                <h3>📋 Basic Information</h3>
+                
+                <div class="form-group">
+                    <label for="name">Tourist Spot Name <span class="required">*</span></label>
+                    <input type="text" 
+                           id="name" 
+                           th:field="*{name}" 
+                           required 
+                           placeholder="e.g., Marina Beach, Fort St. George">
+                    <div class="help-text">The official name of the tourist attraction</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="category">Category <span class="required">*</span></label>
+                        <select id="category" th:field="*{category}" required>
+                            <option value="">Select category</option>
+                            <option value="Historical">Historical</option>
+                            <option value="Cultural">Cultural</option>
+                            <option value="Natural">Natural</option>
+                            <option value="Religious">Religious</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Shopping">Shopping</option>
+                            <option value="Beach">Beach</option>
+                            <option value="Museum">Museum</option>
+                            <option value="Park">Park</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="rating">Rating <span class="required">*</span></label>
+                        <input type="number" 
+                               id="rating" 
+                               th:field="*{rating}" 
+                               required 
+                               min="0" 
+                               max="5" 
+                               step="0.1"
+                               placeholder="4.5">
+                        <div class="help-text">Rating out of 5 stars</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description <span class="required">*</span></label>
+                    <textarea id="description" 
+                              th:field="*{description}" 
+                              required 
+                              placeholder="Provide a detailed description of the tourist spot, its history, attractions, and what visitors can expect..."></textarea>
+                    <div class="help-text">Detailed description for visitors</div>
+                </div>
+
+                <!-- Location Information -->
+                <h3>📍 Location Information</h3>
+
+                <div class="form-group">
+                    <label for="location">Location/Address <span class="required">*</span></label>
+                    <input type="text" 
+                           id="location" 
+                           th:field="*{location}" 
+                           required 
+                           placeholder="Complete address with area and city">
+                    <div class="help-text">Full address where visitors can find the spot</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="latitude">Latitude</label>
+                        <input type="number" 
+                               id="latitude" 
+                               th:field="*{latitude}" 
+                               step="any"
+                               placeholder="13.0827">
+                        <div class="help-text">GPS latitude coordinate (optional)</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="longitude">Longitude</label>
+                        <input type="number" 
+                               id="longitude" 
+                               th:field="*{longitude}" 
+                               step="any"
+                               placeholder="80.2707">
+                        <div class="help-text">GPS longitude coordinate (optional)</div>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <h3>🖼️ Media & Additional Info</h3>
+
+                <div class="form-group">
+                    <label for="imageUrl">Image URL</label>
+                    <input type="url" 
+                           id="imageUrl" 
+                           th:field="*{imageUrl}" 
+                           placeholder="https://example.com/image.jpg">
+                    <div class="help-text">URL of the main image for this tourist spot</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="visitingHours">Visiting Hours</label>
+                        <input type="text" 
+                               id="visitingHours" 
+                               th:field="*{visitingHours}" 
+                               placeholder="9:00 AM - 6:00 PM">
+                        <div class="help-text">When visitors can access the spot</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="entryFee">Entry Fee</label>
+                        <input type="text" 
+                               id="entryFee" 
+                               th:field="*{entryFee}" 
+                               placeholder="₹50 for adults, ₹25 for children">
+                        <div class="help-text">Cost of entry (if any)</div>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <button type="submit" class="btn-submit">
+                    <span th:text="${touristSpot.id != null ? '💾 Update Tourist Spot' : '➕ Add Tourist Spot'}">Submit</span>
+                </button>
+                
+                <a href="/admin/tourist-spots" class="btn-cancel">
+                    ❌ Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Smart City Management - Admin Panel
+    </footer>
+</body>
+</html>

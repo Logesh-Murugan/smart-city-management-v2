@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${emergencyContact.id != null ? 'Edit Emergency Contact' : 'Add Emergency Contact'} + ' - Admin'">Emergency Contact Form</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .form-header {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .required {
+            color: #e74c3c;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+        }
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .help-text {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .btn-submit {
+            background: #27ae60;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn-submit:hover {
+            background: #219a52;
+        }
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            margin-top: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn-cancel:hover {
+            background: #7f8c8d;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div th:replace="~{fragments/navbar :: navbar('admin')}"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="form-header">
+            <h1 th:text="${emergencyContact.id != null ? '✏️ Edit Emergency Contact' : '➕ Add New Emergency Contact'}">Form Title</h1>
+            <p>Provide complete emergency service contact information</p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success">
+            <span th:text="${success}">Success message</span>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <span th:text="${error}">Error message</span>
+        </div>
+
+        <!-- Form -->
+        <div class="form-container">
+            <form th:action="${emergencyContact.id != null ? '/admin/emergency-contacts/edit/' + emergencyContact.id : '/admin/emergency-contacts/add'}" 
+                  method="post" 
+                  th:object="${emergencyContact}">
+                
+                <!-- Basic Information -->
+                <h3>📋 Service Information</h3>
+                
+                <div class="form-group">
+                    <label for="serviceName">Service Name <span class="required">*</span></label>
+                    <input type="text" 
+                           id="serviceName" 
+                           th:field="*{serviceName}" 
+                           required 
+                           placeholder="e.g., Chennai Police Control Room, Fire Station">
+                    <div class="help-text">The official name of the emergency service</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="serviceType">Service Type <span class="required">*</span></label>
+                        <select id="serviceType" th:field="*{serviceType}" required>
+                            <option value="">Select service type</option>
+                            <option value="Police">Police</option>
+                            <option value="Fire">Fire & Rescue</option>
+                            <option value="Medical">Medical/Ambulance</option>
+                            <option value="Emergency">General Emergency</option>
+                            <option value="Disaster">Disaster Management</option>
+                            <option value="Traffic">Traffic Police</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="availability">Availability <span class="required">*</span></label>
+                        <input type="text" 
+                               id="availability" 
+                               th:field="*{availability}" 
+                               required 
+                               placeholder="24/7, Mon-Fri 9AM-5PM, etc.">
+                        <div class="help-text">When this service is available</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Service Description <span class="required">*</span></label>
+                    <textarea id="description" 
+                              th:field="*{description}" 
+                              required 
+                              placeholder="Describe what services are provided, when to contact, and what kind of emergencies they handle..."></textarea>
+                    <div class="help-text">Detailed description of the emergency service</div>
+                </div>
+
+                <!-- Contact Information -->
+                <h3>📞 Contact Information</h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phoneNumber">Primary Phone Number <span class="required">*</span></label>
+                        <input type="tel" 
+                               id="phoneNumber" 
+                               th:field="*{phoneNumber}" 
+                               required 
+                               placeholder="100, 101, 108, or full number">
+                        <div class="help-text">Main emergency contact number</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="alternateNumber">Alternate Number</label>
+                        <input type="tel" 
+                               id="alternateNumber" 
+                               th:field="*{alternateNumber}" 
+                               placeholder="044-12345678">
+                        <div class="help-text">Secondary contact number (optional)</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location/Address <span class="required">*</span></label>
+                    <input type="text" 
+                           id="location" 
+                           th:field="*{location}" 
+                           required 
+                           placeholder="Complete address of the emergency service office">
+                    <div class="help-text">Physical address where the service is located</div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <button type="submit" class="btn-submit">
+                    <span th:text="${emergencyContact.id != null ? '💾 Update Emergency Contact' : '➕ Add Emergency Contact'}">Submit</span>
+                </button>
+                
+                <a href="/admin/emergency-contacts" class="btn-cancel">
+                    ❌ Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Smart City Management - Admin Panel
+    </footer>
+</body>
+</html>

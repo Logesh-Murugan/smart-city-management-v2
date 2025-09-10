@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Services - Smart City Management</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Include navbar styles directly -->
+    <div th:replace="~{fragments/navbar :: navbar-styles}"></div>
+
+    <!-- Modern Utilities Page Styles -->
+    <style>
+        /* Page Hero Section */
+        .page-hero {
+            background: linear-gradient(135deg, var(--accent-600) 0%, var(--accent-700) 50%, var(--primary-600) 100%);
+            color: white;
+            padding: var(--space-20) 0 var(--space-16);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .page-hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        .page-hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: var(--space-4);
+            line-height: 1.1;
+        }
+
+        .page-hero-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: var(--space-8);
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .page-hero-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-4);
+            opacity: 0.9;
+        }
+
+        /* Utilities Grid */
+        .utilities-section {
+            padding: var(--space-16) 0;
+        }
+
+        .utilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--space-8);
+            margin-top: var(--space-12);
+        }
+
+        .utility-card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-all);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--gray-100);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .utility-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-500), var(--primary-500));
+            transform: scaleX(0);
+            transition: transform var(--transition-normal);
+        }
+
+        .utility-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .utility-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-2xl);
+            color: inherit;
+        }
+
+        .utility-icon {
+            font-size: 3rem;
+            margin-bottom: var(--space-4);
+            background: linear-gradient(135deg, var(--accent-500), var(--primary-500));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .utility-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--space-3);
+        }
+
+        .utility-description {
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: var(--space-4);
+        }
+
+        .utility-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+        }
+
+        .utility-feature {
+            background: var(--accent-50);
+            color: var(--accent-700);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .utility-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            color: var(--accent-600);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition-colors);
+        }
+
+        .utility-link:hover {
+            color: var(--accent-700);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: var(--gray-50);
+            padding: var(--space-16) 0;
+            margin-top: var(--space-16);
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+            margin-top: var(--space-8);
+        }
+
+        .action-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-all);
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-500), var(--primary-500));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin: 0 auto var(--space-4);
+        }
+
+        .action-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+        }
+
+        .action-description {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            margin-bottom: var(--space-4);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-20) var(--space-6);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-4);
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: var(--space-3);
+        }
+
+        .empty-state-description {
+            color: var(--gray-500);
+            margin-bottom: var(--space-6);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .page-hero-title {
+                font-size: 2.5rem;
+            }
+
+            .page-hero-subtitle {
+                font-size: 1.125rem;
+            }
+
+            .utilities-grid,
+            .actions-grid {
+                grid-template-columns: 1fr;
+                gap: var(--space-6);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-hero {
+                padding: var(--space-16) 0 var(--space-12);
+            }
+
+            .page-hero-title {
+                font-size: 2rem;
+            }
+
+            .utility-card {
+                padding: var(--space-6);
+            }
+        }
+    </style>
+</head>
+<body class="page-transition">
+    <!-- Simple Navigation -->
+    <nav class="modern-navbar" id="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <span class="navbar-brand-icon">🏙️</span>
+                <span>Smart City</span>
+            </a>
+
+            <ul class="navbar-nav">
+                <li><a href="/">🏠 Home</a></li>
+                <li><a href="/tourist-spots">🗺️ Tourist Spots</a></li>
+                <li><a href="/city-services">🏢 City Services</a></li>
+                <li><a href="/utilities" class="active">⚡ Utilities</a></li>
+                <li><a href="/emergency-contacts">🚨 Emergency</a></li>
+            </ul>
+
+            <div class="navbar-auth">
+                <a href="/login" class="btn btn-secondary btn-sm" sec:authorize="!isAuthenticated()">Login</a>
+                <a href="/register" class="btn btn-primary btn-sm" sec:authorize="!isAuthenticated()">Register</a>
+                <a href="/logout" class="btn btn-secondary btn-sm" sec:authorize="isAuthenticated()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Back Button -->
+    <div class="container" style="padding-top: 1.5rem;">
+        <a href="/" class="btn-back">Back to Home</a>
+    </div>
+
+    <!-- Page Hero Section -->
+    <section class="page-hero">
+        <div class="page-hero-content">
+            <div class="page-hero-icon animate-bounce">⚡</div>
+            <h1 class="page-hero-title animate-fade-in">Utility Services</h1>
+            <p class="page-hero-subtitle animate-fade-in">
+                Manage your electricity, water, gas, and other essential utility services with ease and efficiency
+            </p>
+        </div>
+    </section>
+
+    <!-- Utilities Section -->
+    <section class="utilities-section">
+        <div class="container">
+            <!-- Utilities Grid -->
+            <div th:if="${utilityServices != null and !utilityServices.empty}">
+                <div class="section-header">
+                    <h2 class="section-title">Available Services</h2>
+                    <p class="section-subtitle">
+                        <span th:text="${#lists.size(utilityServices)}">0</span> utility services ready to assist you
+                    </p>
+                </div>
+
+                <div class="utilities-grid">
+                    <a th:each="utility, iterStat : ${utilityServices}"
+                       th:href="@{/utilities/{id}(id=${utility.id})}"
+                       class="utility-card animate-scale-in">
+
+                        <div class="utility-icon">
+                            <span th:switch="${utility.utilityType.name()}">
+                                <span th:case="'ELECTRICITY'">⚡</span>
+                                <span th:case="'WATER'">💧</span>
+                                <span th:case="'GAS'">🔥</span>
+                                <span th:case="'INTERNET'">🌐</span>
+                                <span th:case="'WASTE'">♻️</span>
+                                <span th:case="'SEWAGE'">🚰</span>
+                                <span th:case="'STREET_LIGHT'">💡</span>
+                                <span th:case="*">🔧</span>
+                            </span>
+                        </div>
+
+                        <h3 class="utility-title" th:text="${utility.serviceName}">Utility Service Name</h3>
+
+                        <p class="utility-description" th:text="${utility.description ?: 'Professional utility service to meet your essential needs with reliable support and efficient solutions.'}">
+                            Description of the utility service and what it provides to citizens.
+                        </p>
+
+                        <!-- Features/Tags -->
+                        <div class="utility-features">
+                            <span class="utility-feature" th:text="${utility.utilityType.displayName}">Type</span>
+                            <span class="utility-feature">24/7 Support</span>
+                            <span class="utility-feature">Online Service</span>
+                        </div>
+
+                        <span class="utility-link">
+                            View Details →
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${utilityServices == null or utilityServices.empty}" class="empty-state animate-fade-in">
+                <div class="empty-state-icon">⚡</div>
+                <h2 class="empty-state-title">No Utility Services Available</h2>
+                <p class="empty-state-description">
+                    We're working on adding utility services to help you manage your essential needs. Check back soon!
+                </p>
+                <a href="/" class="btn btn-primary">
+                    <span>🏠</span> Return Home
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="quick-actions">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Quick Actions</h2>
+                <p class="section-subtitle">Fast access to essential utility services</p>
+            </div>
+
+            <div class="actions-grid">
+                <div class="action-card animate-fade-in">
+                    <div class="action-icon">🔍</div>
+                    <h3 class="action-title">Track Request</h3>
+                    <p class="action-description">Monitor the status of your submitted utility requests</p>
+                    <a href="/utilities/track" class="btn btn-primary btn-sm">Track Now</a>
+                </div>
+
+                <div class="action-card animate-fade-in">
+                    <div class="action-icon">📝</div>
+                    <h3 class="action-title">Submit Request</h3>
+                    <p class="action-description">Report issues or request new utility services</p>
+                    <a href="/utilities" class="btn btn-primary btn-sm">Submit Request</a>
+                </div>
+
+                <div class="action-card animate-fade-in">
+                    <div class="action-icon">💡</div>
+                    <h3 class="action-title">Emergency Report</h3>
+                    <p class="action-description">Report urgent utility emergencies immediately</p>
+                    <a href="/emergency-contacts" class="btn btn-primary btn-sm">Report Emergency</a>
+                </div>
+
+                <div class="action-card animate-fade-in">
+                    <div class="action-icon">📊</div>
+                    <h3 class="action-title">Service Status</h3>
+                    <p class="action-description">Check current status of all utility services</p>
+                    <a href="/utilities" class="btn btn-primary btn-sm">Check Status</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modern Footer -->
+    <footer class="modern-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>⚡ Utility Services</h3>
+                    <p>Reliable and efficient utility services for all your essential needs.</p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="/">Home</a></p>
+                    <p><a href="/utilities/track">Track Request</a></p>
+                    <p><a href="/emergency-contacts">Emergency</a></p>
+                    <p><a href="/city-services">City Services</a></p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <p><a href="/feedback">Feedback</a></p>
+                    <p><a href="/emergency-contacts">Emergency Help</a></p>
+                    <p><a href="mailto:utilities@smartcity.gov">Utility Support</a></p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>📧 utilities@smartcity.gov</p>
+                    <p>📞 +1 (555) 123-UTIL</p>
+                    <p>📍 Utilities Department, City Hall</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 Smart City Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for animations and interactions -->
+    <script>
+        // Page load animations
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.page-transition').classList.add('loaded');
+
+            // Staggered animations for cards
+            const cards = document.querySelectorAll('.utility-card, .action-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

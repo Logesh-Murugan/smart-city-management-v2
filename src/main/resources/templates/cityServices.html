@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>City Services - Smart City Management</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* Modern Navigation Styles */
+    .modern-navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: var(--space-4) 0;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-normal);
+    }
+
+    .modern-navbar.scrolled {
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .navbar-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 var(--space-6);
+    }
+
+    .navbar-brand {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--primary-600);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      transition: var(--transition-colors);
+    }
+
+    .navbar-brand:hover {
+      color: var(--primary-700);
+    }
+
+    .navbar-brand-icon {
+      font-size: 2rem;
+    }
+
+    .navbar-nav {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: var(--space-8);
+    }
+
+    .navbar-nav li a {
+      color: var(--gray-700);
+      text-decoration: none;
+      font-weight: 500;
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-normal);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .navbar-nav li a:hover {
+      color: var(--primary-600);
+      background: var(--primary-50);
+    }
+
+    .navbar-nav li a.active {
+      color: var(--primary-600);
+      background: var(--primary-100);
+      font-weight: 600;
+    }
+
+    .navbar-auth {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .btn {
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all var(--transition-normal);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn-primary {
+      background: var(--primary-600);
+      color: white;
+      border-color: var(--primary-600);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-700);
+      border-color: var(--primary-700);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--gray-700);
+      border-color: var(--gray-300);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-400);
+    }
+
+    .btn-sm {
+      padding: var(--space-1) var(--space-3);
+      font-size: 0.875rem;
+    }
+
+    /* City Services Specific Styles */
+    .page-hero {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      padding: var(--space-16) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .services-section {
+      padding: var(--space-16) 0;
+      background: var(--gray-50);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: var(--space-6);
+      margin-top: var(--space-8);
+    }
+
+    .service-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .service-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: #3b82f6;
+    }
+
+    .service-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: var(--space-4);
+    }
+
+    .service-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .service-description {
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: var(--space-4);
+    }
+
+    .service-details {
+      space-y: var(--space-2);
+    }
+
+    .service-detail {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--gray-700);
+      font-size: 0.875rem;
+      margin-bottom: var(--space-2);
+    }
+
+    .service-type-badge {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-3);
+      display: inline-block;
+    }
+
+    .service-actions {
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .btn-service {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-service:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--space-16);
+      color: var(--gray-600);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: var(--space-4);
+    }
+
+    .empty-state-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .empty-state-description {
+      margin-bottom: var(--space-6);
+    }
+  </style>
+</head>
+<body class="page-transition">
+  <!-- Simple Navigation -->
+  <nav class="modern-navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="/" class="navbar-brand">
+        <span class="navbar-brand-icon">🏙️</span>
+        <span>Smart City</span>
+      </a>
+
+      <ul class="navbar-nav">
+        <li><a href="/">🏠 Home</a></li>
+        <li><a href="/tourist-spots">🗺️ Tourist Spots</a></li>
+        <li><a href="/city-services" class="active">🏢 City Services</a></li>
+        <li><a href="/utilities">⚡ Utilities</a></li>
+        <li><a href="/emergency-contacts">🚨 Emergency</a></li>
+      </ul>
+
+      <div class="navbar-auth">
+        <a href="/login" class="btn btn-secondary btn-sm" sec:authorize="!isAuthenticated()">Login</a>
+        <a href="/register" class="btn btn-primary btn-sm" sec:authorize="!isAuthenticated()">Register</a>
+        <a href="/logout" class="btn btn-secondary btn-sm" sec:authorize="isAuthenticated()">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Back Button -->
+  <div class="container" style="padding-top: 1.5rem;">
+    <a href="/" class="btn-back">Back to Home</a>
+  </div>
+
+  <!-- Page Hero Section -->
+  <section class="page-hero">
+    <div class="page-hero-content">
+      <div class="page-hero-icon animate-bounce">🏢</div>
+      <h1 class="page-hero-title animate-fade-in">City Services</h1>
+      <p class="page-hero-subtitle animate-fade-in">
+        Access essential municipal services, permits, licenses, and public facilities with ease and efficiency
+      </p>
+    </div>
+  </section>
+
+  <!-- City Services Section -->
+  <section class="services-section">
+    <div class="container">
+      <!-- City Services Grid -->
+      <div th:if="${cityServices != null and !cityServices.empty}">
+        <div class="section-header">
+          <h2 class="section-title">Available Services</h2>
+          <p class="section-subtitle">
+            <span th:text="${#lists.size(cityServices)}">0</span> municipal services ready to assist you
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <div th:each="service, iterStat : ${cityServices}" class="service-card animate-scale-in">
+
+            <div class="service-icon">
+              <span th:switch="${service.type}">
+                <span th:case="'Hospital'">🏥</span>
+                <span th:case="'Transport'">🚌</span>
+                <span th:case="'Police'">👮</span>
+                <span th:case="'Utilities'">⚡</span>
+                <span th:case="'Education'">🎓</span>
+                <span th:case="'Government'">🏛️</span>
+                <span th:case="'Emergency'">🚨</span>
+                <span th:case="*">🏢</span>
+              </span>
+            </div>
+
+            <div class="service-type-badge" th:text="${service.type}">Service Type</div>
+
+            <h3 class="service-title" th:text="${service.name}">City Service Name</h3>
+
+            <p class="service-description" th:text="${service.description ?: 'Professional municipal service to meet your civic needs with reliable support and efficient processing.'}">
+              Description of the city service and what it provides to citizens.
+            </p>
+
+            <div class="service-details">
+              <div class="service-detail" th:if="${service.address != null and !service.address.isEmpty()}">
+                <span>📍</span>
+                <span th:text="${service.address}">Office Address</span>
+              </div>
+
+              <div class="service-detail" th:if="${service.phone != null and !service.phone.isEmpty()}">
+                <span>📞</span>
+                <span th:text="${service.phone}">Contact Numbers</span>
+              </div>
+
+              <div class="service-detail" th:if="${service.email != null and !service.email.isEmpty()}">
+                <span>📧</span>
+                <span th:text="${service.email}">Email</span>
+              </div>
+
+              <div class="service-detail" th:if="${service.timings != null and !service.timings.isEmpty()}">
+                <span>🕒</span>
+                <span th:text="${service.timings}">Working Hours</span>
+              </div>
+            </div>
+
+            <div class="service-actions">
+              <a th:href="@{/city-services/{id}(id=${service.id})}" class="btn-service">
+                <span>📋</span> Access Service
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div th:if="${cityServices == null or cityServices.empty}" class="empty-state animate-fade-in">
+        <div class="empty-state-icon">🏢</div>
+        <h2 class="empty-state-title">No City Services Available</h2>
+        <p class="empty-state-description">
+          We're working on adding municipal services to help you with permits, licenses, and public facilities. Check back soon!
+        </p>
+        <a href="/" class="btn btn-primary">
+          <span>🏠</span> Return Home
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modern Footer -->
+  <footer class="modern-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>🏢 City Services</h3>
+          <p>Efficient municipal services for all your civic needs.</p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <p><a href="/">Home</a></p>
+          <p><a href="/tourist-spots">Tourist Spots</a></p>
+          <p><a href="/utilities">Utilities</a></p>
+          <p><a href="/emergency-contacts">Emergency</a></p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Support</h3>
+          <p><a href="/feedback">Feedback</a></p>
+          <p><a href="/emergency-contacts">Emergency Help</a></p>
+          <p><a href="mailto:services@smartcity.gov">Service Support</a></p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <p>📧 services@smartcity.gov</p>
+          <p>📞 +1 (555) 123-CITY</p>
+          <p>📍 City Services Department, City Hall</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Smart City Management System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript for animations and interactions -->
+  <script>
+    // Page load animations
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelector('.page-transition').classList.add('loaded');
+
+      // Staggered animations for cards
+      const cards = document.querySelectorAll('.service-card');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+  </script>
+</body>
+</html>
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.service-card');
+
+      cards.forEach(card => {
+        const serviceName = card.dataset.name.toLowerCase();
+        const serviceDescription = card.querySelector('.service-description').textContent.toLowerCase();
+
+        if (serviceName.includes(searchTerm) || serviceDescription.includes(searchTerm)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    // Show service details (placeholder for future modal implementation)
+    function showServiceDetails(serviceId) {
+      alert('Service details for ID: ' + serviceId + '\n\nThis will open a detailed view in the future.');
+    }
+  </script>
+</body>
+</html>

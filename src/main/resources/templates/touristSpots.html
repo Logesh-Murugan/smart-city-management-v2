@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tourist Destinations - Smart City Management</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Include navbar styles directly -->
+  <div th:replace="~{fragments/navbar :: navbar-styles}"></div>
+
+  <!-- Modern Tourist Spots Page Styles -->
+  <style>
+    /* Page Hero Section */
+    .page-hero {
+      background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 50%, var(--accent-600) 100%);
+      color: white;
+      padding: var(--space-20) 0 var(--space-16);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.1;
+    }
+
+    .page-hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    .page-hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: var(--space-4);
+      line-height: 1.1;
+    }
+
+    .page-hero-subtitle {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      margin-bottom: var(--space-8);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .page-hero-icon {
+      font-size: 4rem;
+      margin-bottom: var(--space-4);
+      opacity: 0.9;
+    }
+
+    /* Tourist Spots Grid */
+    .spots-section {
+      padding: var(--space-16) 0;
+    }
+
+    .spots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+      gap: var(--space-8);
+      margin-top: var(--space-12);
+    }
+
+    .tourist-spot-card {
+      background: white;
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition-all);
+      position: relative;
+      border: 1px solid var(--gray-100);
+    }
+
+    .tourist-spot-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-2xl);
+    }
+
+    .spot-image-container {
+      position: relative;
+      height: 250px;
+      overflow: hidden;
+    }
+
+    .tourist-spot-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition-slow);
+    }
+
+    .tourist-spot-card:hover .tourist-spot-image {
+      transform: scale(1.05);
+    }
+
+    .spot-image-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 100%);
+    }
+
+    .spot-location-badge {
+      position: absolute;
+      top: var(--space-4);
+      right: var(--space-4);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .spot-content {
+      padding: var(--space-6);
+    }
+
+    .spot-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: var(--space-3);
+      line-height: 1.3;
+    }
+
+    .spot-location {
+      color: var(--primary-600);
+      font-weight: 500;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .spot-description {
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: var(--space-4);
+    }
+
+    .spot-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .spot-feature {
+      background: var(--primary-50);
+      color: var(--primary-700);
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-20) var(--space-6);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
+    }
+
+    .empty-state-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: var(--space-3);
+    }
+
+    .empty-state-description {
+      color: var(--gray-500);
+      margin-bottom: var(--space-6);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .page-hero-title {
+        font-size: 2.5rem;
+      }
+
+      .page-hero-subtitle {
+        font-size: 1.125rem;
+      }
+
+      .spots-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+      }
+
+      .spot-image-container {
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-hero {
+        padding: var(--space-16) 0 var(--space-12);
+      }
+
+      .page-hero-title {
+        font-size: 2rem;
+      }
+
+      .spot-content {
+        padding: var(--space-4);
+      }
+    }
+  </style>
+</head>
+<body class="page-transition">
+  <!-- Simple Navigation -->
+  <nav class="modern-navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="/" class="navbar-brand">
+        <span class="navbar-brand-icon">🏙️</span>
+        <span>Smart City</span>
+      </a>
+
+      <ul class="navbar-nav">
+        <li><a href="/">🏠 Home</a></li>
+        <li><a href="/tourist-spots" class="active">🗺️ Tourist Spots</a></li>
+        <li><a href="/city-services">🏢 City Services</a></li>
+        <li><a href="/utilities">⚡ Utilities</a></li>
+        <li><a href="/emergency-contacts">🚨 Emergency</a></li>
+      </ul>
+
+      <div class="navbar-auth">
+        <a href="/login" class="btn btn-secondary btn-sm" sec:authorize="!isAuthenticated()">Login</a>
+        <a href="/register" class="btn btn-primary btn-sm" sec:authorize="!isAuthenticated()">Register</a>
+        <a href="/logout" class="btn btn-secondary btn-sm" sec:authorize="isAuthenticated()">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Back Button -->
+  <div class="container" style="padding-top: 1.5rem;">
+    <a href="/" class="btn-back">Back to Home</a>
+  </div>
+
+  <!-- Page Hero Section -->
+  <section class="page-hero">
+    <div class="page-hero-content">
+      <div class="page-hero-icon animate-bounce">🗺️</div>
+      <h1 class="page-hero-title animate-fade-in">Discover Amazing Places</h1>
+      <p class="page-hero-subtitle animate-fade-in">
+        Explore breathtaking tourist destinations, cultural landmarks, and hidden gems throughout our beautiful city
+      </p>
+    </div>
+  </section>
+
+  <!-- Tourist Spots Section -->
+  <section class="spots-section">
+    <div class="container">
+      <!-- Tourist Spots Grid -->
+      <div th:if="${touristSpots != null and !touristSpots.empty}">
+        <div class="section-header">
+          <h2 class="section-title">Featured Destinations</h2>
+          <p class="section-subtitle">
+            <span th:text="${#lists.size(touristSpots)}">0</span> amazing places waiting to be explored
+          </p>
+        </div>
+
+        <div class="spots-grid">
+          <div th:each="spot, iterStat : ${touristSpots}" class="tourist-spot-card animate-scale-in">
+
+            <!-- Image Container -->
+            <div class="spot-image-container">
+              <img th:if="${spot.imageUrl != null and !spot.imageUrl.isEmpty()}"
+                   th:src="${spot.imageUrl}"
+                   th:alt="${spot.name}"
+                   class="tourist-spot-image" />
+              <div th:if="${spot.imageUrl == null or spot.imageUrl.isEmpty()}"
+                   class="tourist-spot-image"
+                   style="background: linear-gradient(135deg, #bae6fd, #fde68a); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: #0284c7;">
+                🏛️
+              </div>
+              <div class="spot-image-overlay"></div>
+              <div th:if="${spot.location != null and !spot.location.isEmpty()}" class="spot-location-badge">
+                <span>📍</span>
+                <span th:text="${spot.location}">Location</span>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="spot-content">
+              <h3 class="spot-title" th:text="${spot.name}">Tourist Spot Name</h3>
+
+              <div th:if="${spot.location != null and !spot.location.isEmpty()}" class="spot-location">
+                <span>📍</span>
+                <span th:text="${spot.location}">Location</span>
+              </div>
+
+              <p class="spot-description" th:text="${spot.description ?: 'Discover this amazing destination in our beautiful city.'}">
+                Description of the tourist spot and what makes it special for visitors.
+              </p>
+
+              <!-- Features/Tags -->
+              <div class="spot-features">
+                <span class="spot-feature" th:if="${spot.category != null}" th:text="${spot.category}">🎯 Popular</span>
+                <span class="spot-feature">📸 Photo Spot</span>
+                <span class="spot-feature">🚶 Walking Friendly</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div th:if="${touristSpots == null or touristSpots.empty}" class="empty-state animate-fade-in">
+        <div class="empty-state-icon">🗺️</div>
+        <h2 class="empty-state-title">No Tourist Spots Available</h2>
+        <p class="empty-state-description">
+          We're working on adding amazing destinations to explore. Check back soon for exciting places to visit!
+        </p>
+        <a href="/" class="btn btn-primary">
+          <span>🏠</span> Return Home
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modern Footer -->
+  <footer class="modern-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>🗺️ Tourist Information</h3>
+          <p>Discover the best attractions and hidden gems in our beautiful city.</p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <p><a href="/">Home</a></p>
+          <p><a href="/city-services">City Services</a></p>
+          <p><a href="/utilities">Utilities</a></p>
+          <p><a href="/emergency-contacts">Emergency</a></p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Support</h3>
+          <p><a href="/feedback">Feedback</a></p>
+          <p><a href="/emergency-contacts">Emergency Help</a></p>
+          <p><a href="mailto:tourism@smartcity.gov">Tourism Info</a></p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Visit Us</h3>
+          <p>📧 tourism@smartcity.gov</p>
+          <p>📞 +1 (555) 123-TOUR</p>
+          <p>📍 Tourism Office, City Hall</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Smart City Management System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript for animations and interactions -->
+  <script>
+    // Page load animations
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelector('.page-transition').classList.add('loaded');
+
+      // Staggered animations for cards
+      const cards = document.querySelectorAll('.tourist-spot-card');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+  </script>
+</body>
+</html>

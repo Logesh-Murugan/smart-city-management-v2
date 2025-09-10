@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feedback — Admin</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+        /* UI polish specific to feedback page */
+        .admin-hero { padding: 28px; border-radius: 12px; color: white; }
+        .controls { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+        .controls .search { flex:1 1 320px; }
+        .card-list { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px; }
+        .feedback-card { background:white; border-radius:12px; padding:14px; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; gap:8px; }
+        .meta { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+        .badge-type { padding:6px 10px; border-radius:9999px; font-weight:700; font-size:0.75rem; color:white; }
+        .type-SUGGESTION{ background:var(--blue-600); }
+        .type-COMPLAINT{ background:var(--red-600); }
+        .type-COMPLIMENT{ background:var(--green-800); }
+        .type-GENERAL{ background:var(--gray-500); }
+        .stack { white-space:pre-wrap; background:#0b1220; color:#e6eef8; padding:12px; border-radius:8px; }
+        .pagination { display:flex; gap:8px; align-items:center; justify-content:center; margin-top:16px; }
+        .pagination button { padding:8px 12px; border-radius:8px; border:1px solid var(--gray-200); background:white; cursor:pointer; }
+        @media (min-width:900px) { .card-list { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+    <script>
+        // small helper to escape HTML for rendering in modal
+        function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m];}); }
+    </script>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: navbar-styles}"></div>
+    <div th:replace="~{fragments/navbar :: navbar('admin')}"></div>
+
+    <main class="container" style="padding:20px 0">
+        <section class="admin-hero bg-gradient-hero glass" style="margin-bottom:18px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <div>
+                    <h1 class="text-3xl font-extrabold">Feedback</h1>
+                    <p class="text-base" style="opacity:0.9">Manage and respond to citizen feedback.</p>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <a href="/admin" class="btn btn-secondary">Dashboard</a>
+                    <a href="/admin/feedback/create" class="btn btn-primary">New Feedback</a>
+                </div>
+            </div>
+        </section>
+
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+            <div class="controls" style="flex:1">
+                <input id="searchBox" class="search select" type="search" placeholder="Search by name, email or message..." />
+                <select id="typeFilter" class="select">
+                    <option value="ALL">All types</option>
+                    <option value="SUGGESTION">Suggestions</option>
+                    <option value="COMPLAINT">Complaints</option>
+                    <option value="COMPLIMENT">Compliments</option>
+                    <option value="GENERAL">General</option>
+                </select>
+                <select id="perPage" class="select">
+                    <option value="6">6 / page</option>
+                    <option value="10">10 / page</option>
+                    <option value="20">20 / page</option>
+                </select>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px">
+                <!-- Export feature removed -->
+            </div>
+        </div>
+
+        <section>
+            <div id="cards" class="card-list">
+                <div th:each="fb : ${feedbacks}" th:data-id="${fb.id}"
+                     th:data-type="${fb.feedbackType != null ? fb.feedbackType.name() : 'GENERAL'}"
+                     th:data-name="${fb.name != null ? fb.name : (fb.user != null ? fb.user.name : '')}"
+                     th:data-email="${fb.email != null ? fb.email : (fb.user != null ? fb.user.email : '')}"
+                     th:data-rating="${fb.rating}"
+                     th:data-created="${fb.createdAt}"
+                     class="feedback-card">
+                    <div class="meta">
+                        <div>
+                            <div style="font-weight:700" th:text="${fb.subject != null ? fb.subject : 'No subject'}">Subject</div>
+                            <div class="text-sm" style="color:var(--gray-600);" th:text="${fb.name != null ? fb.name : (fb.user != null ? fb.user.name : 'Anonymous')}">Name</div>
+                        </div>
+                        <div style="text-align:right">
+                            <div th:with="ft=${fb.feedbackType != null ? fb.feedbackType.name() : 'GENERAL'}">
+                                <span class="badge-type" th:classappend=" ' type-' + ${ft}" th:text="${ft}">TYPE</span>
+                            </div>
+                            <div style="margin-top:8px;color:var(--gray-500);font-size:0.9rem" th:text="${fb.createdAt != null ? #temporals.format(fb.createdAt,'MMM dd, yyyy') : '-'}">Date</div>
+                        </div>
+                    </div>
+                    <div style="color:var(--gray-700);min-height:48px;overflow:hidden;" th:utext="${#strings.abbreviate(fb.message,220)}">Message</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+                        <div style="color:var(--gray-600)">Rating: <strong th:text="${fb.rating}">0</strong></div>
+                        <div style="display:flex;gap:8px">
+                            <button class="btn btn-secondary btn-sm" type="button" onclick="openModal(this)">View</button>
+                            <a th:href="@{/admin/feedback/delete/{id}(id=${fb.id})}" class="btn btn-delete btn-sm" onclick="return confirm('Delete this feedback?')">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="emptyState" th:if="${feedbacks == null or feedbacks.empty}" class="no-feedback" style="margin-top:16px">
+                <h3>No feedback found</h3>
+                <p>There are no feedback entries to display.</p>
+            </div>
+
+            <div id="loadMoreContainer" style="text-align:center;margin-top:16px">
+                <button id="loadMoreBtn" class="btn btn-secondary" style="display:none;">Load more</button>
+                <div id="scrollHint" class="text-sm" style="color:var(--gray-600);margin-top:8px;">Scroll to load more feedback</div>
+            </div>
+        </section>
+
+        <div th:if="${errorStack}" style="margin-top:16px">
+            <h4>Debug stacktrace</h4>
+            <pre class="stack" th:text="${errorStack}"></pre>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="modal" style="display:none;position:fixed;inset:0;background:rgba(2,6,23,0.6);align-items:center;justify-content:center;padding:20px;z-index:2000">
+        <div style="background:white;border-radius:12px;max-width:900px;width:100%;padding:18px;box-shadow:var(--shadow-2xl);position:relative">
+            <button onclick="closeModal()" style="position:absolute;right:12px;top:12px;border:none;background:transparent;font-size:20px;cursor:pointer">✕</button>
+            <h3 id="m-subject">Subject</h3>
+            <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+                <div id="m-name" style="font-weight:700;color:var(--gray-700)">Name</div>
+                <div id="m-type" class="badge-type" style="margin-left:8px">Type</div>
+                <div style="margin-left:auto;color:var(--gray-500)" id="m-date">Date</div>
+            </div>
+            <div id="m-message" style="white-space:pre-wrap;color:var(--gray-800);margin-bottom:12px">Message</div>
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+                <a id="m-delete" href="#" class="btn btn-delete">Delete</a>
+                <button class="btn btn-primary" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Client-side search, filter, pagination, modal
+        (function(){
+            const cardsContainer = document.getElementById('cards');
+            const allCards = Array.from(cardsContainer.querySelectorAll('.feedback-card'));
+            const searchBox = document.getElementById('searchBox');
+            const typeFilter = document.getElementById('typeFilter');
+            const perPageSelect = document.getElementById('perPage');
+            const paginationControls = document.getElementById('paginationControls');
+            const pageNumbers = document.getElementById('pageNumbers');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            let filtered = allCards.slice();
+            let page = 1;
+            let perPage = parseInt(perPageSelect.value);
+
+            function applyFilters(){
+                const q = searchBox.value.trim().toLowerCase();
+                const type = typeFilter.value;
+                filtered = allCards.filter(c=>{
+                    const name = (c.dataset.name||'').toLowerCase();
+                    const email = (c.dataset.email||'').toLowerCase();
+                    const msg = (c.innerText||'').toLowerCase();
+                    const t = (c.dataset.type||'GENERAL');
+                    if(type !== 'ALL' && t !== type) return false;
+                    if(!q) return true;
+                    return name.includes(q) || email.includes(q) || msg.includes(q);
+                });
+                page = 1; render();
+            }
+
+            function render(){
+
+                perPage = parseInt(perPageSelect.value);
+                // hide all initially
+                allCards.forEach(c=>c.style.display='none');
+
+                // show current slice
+                const start = 0; const end = page * perPage;
+                filtered.slice(0,end).forEach(c=>c.style.display='flex');
+
+                // show/hide Load More button
+                const total = filtered.length;
+                const shown = Math.min(end, total);
+                const loadMoreBtn = document.getElementById('loadMoreBtn');
+                if(shown < total){ loadMoreBtn.style.display='inline-flex'; }
+                else { loadMoreBtn.style.display='none'; }
+            }
+
+            searchBox.addEventListener('input', applyFilters);
+            typeFilter.addEventListener('change', applyFilters);
+            perPageSelect.addEventListener('change', ()=>{ page=1; render(); });
+
+            // infinite scroll: when near bottom, load next page
+            function onScrollLoad(){
+                const scrolledToBottom = (window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 200);
+                if(scrolledToBottom){
+                    loadNext();
+                }
+            }
+
+            function loadNext(){
+                const total = filtered.length;
+                const currentlyShown = Math.min(page * perPage, total);
+                if(currentlyShown >= total) return;
+                page++;
+                render();
+            }
+
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            loadMoreBtn.addEventListener('click', loadNext);
+            window.addEventListener('scroll', function(){
+                // throttle simple
+                if(this._scrollTimeout) clearTimeout(this._scrollTimeout);
+                this._scrollTimeout = setTimeout(onScrollLoad, 150);
+            });
+
+            // initial render
+            applyFilters();
+
+            // modal
+            window.openModal = function(btn){
+                const card = btn.closest('.feedback-card');
+                if(!card) return;
+                const subj = card.querySelector('[th\:text]') || card.querySelector('div');
+                document.getElementById('m-subject').textContent = card.querySelector('[style*="font-weight:700"]').textContent || 'Feedback';
+                document.getElementById('m-name').textContent = card.dataset.name || 'Anonymous';
+                const type = card.dataset.type || 'GENERAL';
+                const mtype = document.getElementById('m-type'); mtype.textContent = type; mtype.className = 'badge-type type-'+type;
+                document.getElementById('m-date').textContent = card.querySelector('[style*="color:var(--gray-500)"]') ? card.querySelector('[style*="color:var(--gray-500)"]').textContent : '';
+                // full message: use innerText from card but we want full from server if possible. We'll use data-* if available.
+                const msg = card.getAttribute('data-full-message') || card.querySelector('div[th\:utext]')?.innerText || card.innerText;
+                document.getElementById('m-message').textContent = msg;
+                const del = document.getElementById('m-delete'); del.href = card.querySelector('a.btn-delete') ? card.querySelector('a.btn-delete').href : '#';
+                document.getElementById('modal').style.display='flex';
+            }
+            window.closeModal = function(){ document.getElementById('modal').style.display='none'; }
+        })();
+    </script>
+    <div th:replace="~{fragments/footer :: modern-footer}"></div>
+
+    <div th:replace="~{fragments/navbar :: navbar-scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <title>Error - Smart City Management</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <style th:replace="~{fragments/navbar :: navbar-styles}"></style>
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            text-align: center;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .error-icon {
+            font-size: 4em;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+        .error-title {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .error-code {
+            background-color: #ecf0f1;
+            color: #34495e;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+        .error-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .error-actions a {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .error-actions a:hover {
+            background-color: #2980b9;
+        }
+        .error-actions a.secondary {
+            background-color: #95a5a6;
+        }
+        .error-actions a.secondary:hover {
+            background-color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div th:replace="~{fragments/navbar :: navbar('')}"></div>
+
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        
+        <h1 class="error-title" th:text="${errorTitle}">Error</h1>
+        
+        <div class="error-code">
+            Error Code: <span th:text="${statusCode}">Unknown</span>
+        </div>
+        
+        <p class="error-message" th:text="${errorMessage}">An error occurred.</p>
+        
+        <div class="error-actions">
+            <a th:href="@{/}">🏠 Go Home</a>
+            <a href="javascript:history.back()" class="secondary">← Go Back</a>
+            <a href="javascript:location.reload()" class="secondary">🔄 Refresh</a>
+        </div>
+    </div>
+
+    <script>
+        // Auto-redirect to home after 10 seconds for certain errors
+        const statusCode = /*[[${statusCode}]]*/ 'Unknown';
+        if (statusCode === '404') {
+            setTimeout(function() {
+                if (confirm('Would you like to be redirected to the home page?')) {
+                    window.location.href = '/';
+                }
+            }, 10000);
+        }
+    </script>
+</body>
+</html>

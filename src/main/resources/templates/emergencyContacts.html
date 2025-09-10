@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emergency Contacts - Smart City Management</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* Modern Navigation Styles */
+    .modern-navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: var(--space-4) 0;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-normal);
+    }
+
+    .modern-navbar.scrolled {
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .navbar-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 var(--space-6);
+    }
+
+    .navbar-brand {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--primary-600);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      transition: var(--transition-colors);
+    }
+
+    .navbar-brand:hover {
+      color: var(--primary-700);
+    }
+
+    .navbar-brand-icon {
+      font-size: 2rem;
+    }
+
+    .navbar-nav {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      gap: var(--space-8);
+    }
+
+    .navbar-nav li a {
+      color: var(--gray-700);
+      text-decoration: none;
+      font-weight: 500;
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      transition: all var(--transition-normal);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .navbar-nav li a:hover {
+      color: var(--primary-600);
+      background: var(--primary-50);
+    }
+
+    .navbar-nav li a.active {
+      color: var(--primary-600);
+      background: var(--primary-100);
+      font-weight: 600;
+    }
+
+    .navbar-auth {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .btn {
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all var(--transition-normal);
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn-primary {
+      background: var(--primary-600);
+      color: white;
+      border-color: var(--primary-600);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-700);
+      border-color: var(--primary-700);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--gray-700);
+      border-color: var(--gray-300);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-400);
+    }
+
+    .btn-sm {
+      padding: var(--space-1) var(--space-3);
+      font-size: 0.875rem;
+    }
+
+    /* Emergency Contacts Specific Styles */
+    .page-hero {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      padding: var(--space-16) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .emergency-section {
+      padding: var(--space-16) 0;
+      background: var(--gray-50);
+    }
+
+    .emergency-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: var(--space-6);
+      margin-top: var(--space-8);
+    }
+
+    .emergency-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .emergency-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .emergency-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .emergency-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+    }
+
+    .emergency-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: var(--space-4);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .emergency-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .primary-number {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 1.125rem;
+      text-align: center;
+      margin: var(--space-3) 0;
+      display: block;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .primary-number:hover {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .emergency-alert {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-8);
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.125rem;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .availability-badge {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+      box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+    }
+
+    .contact-detail {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--gray-700);
+      font-size: 0.875rem;
+      margin-bottom: var(--space-2);
+    }
+
+    .emergency-contact-info {
+      margin-bottom: var(--space-4);
+    }
+
+    .emergency-description {
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: var(--space-3);
+      font-style: italic;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--space-16);
+      color: var(--gray-600);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: var(--space-4);
+    }
+
+    .empty-state-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .empty-state-description {
+      margin-bottom: var(--space-6);
+    }
+  </style>
+</head>
+<body class="page-transition">
+  <!-- Simple Navigation -->
+  <nav class="modern-navbar" id="navbar">
+    <div class="navbar-container">
+      <a href="/" class="navbar-brand">
+        <span class="navbar-brand-icon">🏙️</span>
+        <span>Smart City</span>
+      </a>
+
+      <ul class="navbar-nav">
+        <li><a href="/">🏠 Home</a></li>
+        <li><a href="/tourist-spots">🗺️ Tourist Spots</a></li>
+        <li><a href="/city-services">🏢 City Services</a></li>
+        <li><a href="/utilities">⚡ Utilities</a></li>
+        <li><a href="/emergency-contacts" class="active">🚨 Emergency</a></li>
+      </ul>
+
+      <div class="navbar-auth">
+        <a href="/login" class="btn btn-secondary btn-sm" sec:authorize="!isAuthenticated()">Login</a>
+        <a href="/register" class="btn btn-primary btn-sm" sec:authorize="!isAuthenticated()">Register</a>
+        <a href="/logout" class="btn btn-secondary btn-sm" sec:authorize="isAuthenticated()">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Back Button -->
+  <div class="container" style="padding-top: 1.5rem;">
+    <a href="/" class="btn-back">Back to Home</a>
+  </div>
+
+  <!-- Page Hero Section -->
+  <section class="page-hero">
+    <div class="page-hero-content">
+      <div class="page-hero-icon animate-bounce">🚨</div>
+      <h1 class="page-hero-title animate-fade-in">Emergency Contacts</h1>
+      <p class="page-hero-subtitle animate-fade-in">
+        Quick access to essential emergency services and contacts for immediate assistance when you need it most
+      </p>
+    </div>
+  </section>
+
+  <!-- Emergency Contacts Section -->
+  <section class="emergency-section">
+    <div class="container">
+      <!-- Emergency Alert -->
+      <div class="emergency-alert animate-fade-in">
+        ⚠️ In case of life-threatening emergencies, call 911 immediately!
+      </div>
+
+      <!-- Emergency Contacts Grid -->
+      <div th:if="${emergencyContacts != null and !emergencyContacts.empty}">
+        <div class="section-header">
+          <h2 class="section-title">Emergency Services</h2>
+          <p class="section-subtitle">
+            <span th:text="${#lists.size(emergencyContacts)}">0</span> emergency services available 24/7
+          </p>
+        </div>
+
+        <div class="emergency-grid">
+          <div th:each="contact, iterStat : ${emergencyContacts}" class="emergency-card animate-scale-in">
+
+            <div class="emergency-icon">
+              <span th:switch="${contact.serviceName}">
+                <span th:case="'Police'">👮</span>
+                <span th:case="'Fire Department'">🚒</span>
+                <span th:case="'Medical Emergency'">🚑</span>
+                <span th:case="'Hospital'">🏥</span>
+                <span th:case="'Ambulance'">🚑</span>
+                <span th:case="*">🚨</span>
+              </span>
+            </div>
+
+            <h3 class="emergency-title" th:text="${contact.serviceName}">Emergency Service Name</h3>
+
+            <a th:href="'tel:' + ${contact.phoneNumber}" class="primary-number">
+              📞 <span th:text="${contact.phoneNumber}">Primary Number</span>
+            </a>
+
+            <div class="emergency-contact-info">
+              <div class="contact-detail" th:if="${contact.alternateNumber != null and !contact.alternateNumber.isEmpty()}">
+                <span>📞</span>
+                <a th:href="'tel:' + ${contact.alternateNumber}" th:text="${contact.alternateNumber}">Alternate Number</a>
+              </div>
+
+              <div class="contact-detail" th:if="${contact.location != null and !contact.location.isEmpty()}">
+                <span>📍</span>
+                <span th:text="${contact.location}">Location</span>
+              </div>
+
+              <div class="contact-detail" th:if="${contact.availability != null and !contact.availability.isEmpty()}">
+                <span>🕒</span>
+                <span class="availability-badge" th:text="${contact.availability}">Availability</span>
+              </div>
+            </div>
+
+            <p class="emergency-description" th:text="${contact.description ?: 'Emergency service available for immediate assistance and support.'}">
+              Description of the emergency service and when to contact them.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div th:if="${emergencyContacts == null or emergencyContacts.empty}" class="empty-state animate-fade-in">
+        <div class="empty-state-icon">🚨</div>
+        <h2 class="empty-state-title">No Emergency Contacts Available</h2>
+        <p class="empty-state-description">
+          Emergency contact information is being updated. For immediate assistance, please call 911.
+        </p>
+        <a href="/" class="btn btn-primary">
+          <span>🏠</span> Return Home
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modern Footer -->
+  <footer class="modern-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>🚨 Emergency Services</h3>
+          <p>Immediate assistance when you need it most.</p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <p><a href="/">Home</a></p>
+          <p><a href="/tourist-spots">Tourist Spots</a></p>
+          <p><a href="/city-services">City Services</a></p>
+          <p><a href="/utilities">Utilities</a></p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Emergency Numbers</h3>
+          <p><a href="tel:911">🚨 Emergency: 911</a></p>
+          <p><a href="tel:311">🏛️ Non-Emergency: 311</a></p>
+          <p><a href="tel:211">ℹ️ Information: 211</a></p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Contact</h3>
+          <p>📧 emergency@smartcity.gov</p>
+          <p>📞 +1 (555) 123-HELP</p>
+          <p>📍 Emergency Services, City Hall</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Smart City Management System. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript for animations and interactions -->
+  <script>
+    // Page load animations
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelector('.page-transition').classList.add('loaded');
+
+      // Staggered animations for cards
+      const cards = document.querySelectorAll('.emergency-card');
+      cards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+  </script>
+</body>
+</html>

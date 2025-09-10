@@ -1,0 +1,21 @@
+<!-- templates/fragments/header.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart City Management</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+<header style="text-align: center;">
+    <h1>Smart City Management System</h1>
+    <nav>
+        <a th:href="@{/}">Home</a> |
+        <a th:href="@{/tourist-spots}">Tourist Spots</a> |
+        <a th:href="@{/feedback}">Feedback</a> |
+        <a th:href="@{/emergency-contacts}">Emergency Contacts</a> |
+        <a th:href="@{/city-services}">City Services</a> |
+        <a th:href="@{/users}">Users</a>
+    </nav>
+    <hr/>
+</header>

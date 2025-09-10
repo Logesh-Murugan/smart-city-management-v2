@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Emergency Contacts - Smart City Management</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Modern Navigation */
+        .modern-navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+
+        .navbar-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #0284c7;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2rem;
+        }
+
+        .navbar-nav li a {
+            color: #374151;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 250ms ease-in-out;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-nav li a:hover {
+            color: #0284c7;
+            background: #f0f9ff;
+        }
+
+        .navbar-nav li a.active {
+            color: #0284c7;
+            background: #e0f2fe;
+            font-weight: 600;
+        }
+
+        .navbar-auth {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: #0284c7;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #0284c7;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background: #f0f9ff;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .admin-header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .admin-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1.125rem;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        /* Statistics */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0284c7;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #4b5563;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Action Buttons */
+        .action-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-add {
+            background: #059669;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-add:hover {
+            background: #047857;
+        }
+
+        /* Table */
+        .contacts-table {
+            background: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .contacts-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .contacts-table th {
+            background: #f9fafb;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .contacts-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: middle;
+        }
+
+        .contacts-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        /* Service Type Badges */
+        .service-type-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .type-police { background: #dbeafe; color: #1e40af; }
+        .type-fire { background: #fee2e2; color: #991b1b; }
+        .type-medical { background: #dcfce7; color: #166534; }
+        .type-disaster { background: #fef3c7; color: #92400e; }
+        .type-other { background: #f3f4f6; color: #374151; }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-edit {
+            background: #2563eb;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* No Contacts Message */
+        .no-contacts {
+            text-align: center;
+            padding: 4rem 1.5rem;
+            color: #6b7280;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .no-contacts h3 {
+            margin: 0 0 1rem 0;
+            color: #4b5563;
+            font-size: 1.5rem;
+        }
+
+        .no-contacts p {
+            margin: 0;
+            font-size: 1.125rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #1f2937;
+            color: #d1d5db;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modern Navigation -->
+    <nav class="modern-navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <span>🏙️</span>
+                <span>Smart City</span>
+            </a>
+
+            <ul class="navbar-nav">
+                <li><a href="/">🏠 Home</a></li>
+                <li><a href="/tourist-spots">🗺️ Tourist Spots</a></li>
+                <li><a href="/city-services">🏢 City Services</a></li>
+                <li><a href="/utilities">⚡ Utilities</a></li>
+                <li><a href="/emergency-contacts">🚨 Emergency</a></li>
+                <li sec:authorize="isAuthenticated()"><a href="/feedback">💬 Feedback</a></li>
+                <li sec:authorize="hasRole('ADMIN')"><a href="/admin" class="active">⚙️ Admin</a></li>
+            </ul>
+
+            <div class="navbar-auth">
+                <a href="/login" class="btn btn-secondary btn-sm" sec:authorize="!isAuthenticated()">Login</a>
+                <a href="/register" class="btn btn-primary btn-sm" sec:authorize="!isAuthenticated()">Register</a>
+                <form th:action="@{/logout}" method="post" style="display: inline;" sec:authorize="isAuthenticated()">
+                    <button type="submit" class="btn btn-secondary btn-sm">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Back Button -->
+        <a href="/admin" class="back-button">
+            ← Back to Admin
+        </a>
+
+        <!-- Header -->
+        <div class="admin-header">
+            <h1>🚨 Emergency Contacts Management</h1>
+            <p>Manage emergency service contacts and information</p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success">
+            <span th:text="${success}">Success message</span>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <span th:text="${error}">Error message</span>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <span class="stat-number" th:text="${totalContacts ?: 0}">0</span>
+                <div class="stat-label">Total Contacts</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" th:text="${policeContacts ?: 0}">0</span>
+                <div class="stat-label">Police</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" th:text="${fireContacts ?: 0}">0</span>
+                <div class="stat-label">Fire</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" th:text="${medicalContacts ?: 0}">0</span>
+                <div class="stat-label">Medical</div>
+            </div>
+        </div>
+
+        <!-- Action Section -->
+        <div class="action-section">
+            <h3 style="margin: 0 0 1rem 0; color: #1f2937; font-weight: 600;">📞 Actions</h3>
+            <a href="/admin/emergency-contacts/add" class="btn-add">
+                ➕ Add New Emergency Contact
+            </a>
+        </div>
+
+        <!-- Emergency Contacts Table -->
+        <div th:if="${emergencyContacts != null and !emergencyContacts.empty}">
+            <div class="contacts-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Service Type</th>
+                            <th>Phone Number</th>
+                            <th>Location</th>
+                            <th>Availability</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="contact : ${emergencyContacts}">
+                            <td>
+                                <strong th:text="${contact.serviceName}">Service Name</strong>
+                                <br>
+                                <small th:text="${#strings.abbreviate(contact.description, 60)}" style="color: #6b7280;">Description</small>
+                            </td>
+                            <td>
+                                <span th:class="'service-type-badge type-' + ${#strings.toLowerCase(contact.serviceType)}"
+                                      th:text="${contact.serviceType}">Type</span>
+                            </td>
+                            <td>
+                                <strong th:text="${contact.phoneNumber}">Phone</strong>
+                                <br>
+                                <small th:if="${contact.alternateNumber}" th:text="'Alt: ' + ${contact.alternateNumber}" style="color: #6b7280;">Alt Number</small>
+                            </td>
+                            <td th:text="${contact.location}">Location</td>
+                            <td>
+                                <span th:text="${contact.availability}"
+                                      th:class="${contact.availability == '24/7'} ? 'text-green-600 font-semibold' : 'text-gray-600'">Availability</span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a th:href="@{/admin/emergency-contacts/edit/{id}(id=${contact.id})}" class="btn-edit">
+                                        ✏️ Edit
+                                    </a>
+                                    <a th:href="@{/admin/emergency-contacts/delete/{id}(id=${contact.id})}"
+                                       class="btn-delete"
+                                       onclick="return confirm('Are you sure you want to delete this emergency contact?')">
+                                        🗑️ Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- No Contacts Message -->
+        <div th:if="${emergencyContacts == null or emergencyContacts.empty}" class="no-contacts">
+            <h3>📞 No Emergency Contacts Found</h3>
+            <p>No emergency contacts have been added yet. Click "Add New Emergency Contact" to get started.</p>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Smart City Management - Admin Panel
+    </footer>
+</body>
+</html>

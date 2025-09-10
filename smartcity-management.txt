@@ -1,0 +1,80 @@
+smartcity-management/
+│
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/smartcity/
+│   │   │        ├── SmartCityManagementApplication.java  # ✅ Main Spring Boot class
+│   │   │        │
+│   │   │        ├── controller/                          # ✅ REST & MVC controllers
+│   │   │        │    ├── AuthController.java
+│   │   │        │    ├── CityServiceController.java
+│   │   │        │    ├── TouristSpotController.java
+│   │   │        │    ├── EmergencyContactController.java
+│   │   │        │    └── FeedbackController.java
+│   │   │        │
+│   │   │        ├── model/                               # ✅ JPA Entities
+│   │   │        │    ├── User.java
+│   │   │        │    ├── CityService.java
+│   │   │        │    ├── TouristSpot.java
+│   │   │        │    ├── EmergencyContact.java
+│   │   │        │    └── Feedback.java
+│   │   │        │
+│   │   │        ├── repository/                          # ✅ Spring Data JPA Repositories
+│   │   │        │    ├── UserRepository.java
+│   │   │        │    ├── CityServiceRepository.java
+│   │   │        │    ├── TouristSpotRepository.java
+│   │   │        │    ├── EmergencyContactRepository.java
+│   │   │        │    └── FeedbackRepository.java
+│   │   │        │
+│   │   │        ├── service/                             # ✅ Business logic services
+│   │   │        │    ├── UserService.java
+│   │   │        │    ├── CityServiceService.java
+│   │   │        │    ├── TouristSpotService.java
+│   │   │        │    ├── EmergencyContactService.java
+│   │   │        │    └── FeedbackService.java
+│   │   │        │
+│   │   │        ├── dto/                                 # ✅ DTOs for request/response
+│   │   │        │    ├── UserDto.java
+│   │   │        │    ├── CityServiceDto.java
+│   │   │        │    ├── TouristSpotDto.java
+│   │   │        │    ├── EmergencyContactDto.java
+│   │   │        │    └── FeedbackDto.java
+│   │   │        │
+│   │   │        ├── security/                            # ✅ JWT, Security Config
+│   │   │        │    ├── SecurityConfig.java
+│   │   │        │    ├── JwtAuthenticationFilter.java
+│   │   │        │    ├── JwtTokenProvider.java
+│   │   │        │    ├── UserDetailsImpl.java
+│   │   │        │    ├── UserDetailsServiceImpl.java
+│   │   │        │    └── AuthEntryPointJwt.java
+│   │   │        │
+│   │   │        ├── config/                              # ✅ Other configs
+│   │   │        │    └── SwaggerConfig.java              # (Optional: Swagger/OpenAPI)
+│   │   │        │
+│   │   │        └── exception/                           # ✅ Global error handling
+│   │   │             ├── GlobalExceptionHandler.java
+│   │   │             └── ResourceNotFoundException.java
+│   │   │
+│   │   ├── resources/
+│   │   │   ├── application.properties                    # ✅ DB config & other props
+│   │   │   ├── templates/                                # ✅ Thymeleaf templates
+│   │   │   │    ├── index.html
+│   │   │   │    ├── login.html
+│   │   │   │    ├── dashboard.html
+│   │   │   │    └── error.html
+│   │   │   ├── static/                                   # ✅ CSS / Images
+│   │   │   │    ├── css/
+│   │   │   │    │    └── styles.css
+│   │   │   │    └── images/
+│   │   │   │         └── logo.png
+│   │   │   └── application.properties
+│   │
+│   ├── test/
+│   │   └── java/com/smartcity/
+│   │         ├── controller/
+│   │         ├── service/
+│   │         └── repository/
+│
+├── pom.xml
+└── README.md
